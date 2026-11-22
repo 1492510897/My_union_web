@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>扫码登录</title>
+    <title>4399 扫码登录</title>
+    <link rel="stylesheet" href="css/loading.css">
 </head>
 <body>
-    <div class="container">
-        <img src="images/qr.png" alt="二维码">
+    <div class="qr-card">
+        <h2>4399 扫码登录</h2>
+        <p class="tip">请使用手机 4399 App 扫描下方二维码</p>
+
+        <div class="qr-box">
+            <img id="qrImage" alt="二维码" width="200" height="200">
+            <div class="qr-mask" id="qrMask" hidden>二维码已过期，请点击刷新</div>
+        </div>
+
+        <p class="status" id="status">正在获取二维码...</p>
+
+        <div class="actions">
+            <button type="button" id="refresh">刷新二维码</button>
+            <button type="button" id="Logining" disabled>扫码后点击登录</button>
+        </div>
     </div>
-    <h2>
-        <button href="#" id="refresh">点击此按钮进行刷新</button>
-        <button href="#" id="Logining">扫码后请点击此按钮进行登录</button>
-    </h2>
-
-    <h3>
-        <p>{status}</p>
-    </h3>
-
-
 
     <script src="js/loading.js"></script>
 </body>
