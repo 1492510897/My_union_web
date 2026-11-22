@@ -6,6 +6,7 @@
     const refreshBtn = document.getElementById('refresh');
     const loginBtn = document.getElementById('Logining');
     const statusEl = document.getElementById('status');
+    const QuitButton = document.getElementById('quit');
 
     const POLL_INTERVAL = 3000;
     const IMAGE_URL = 'api/qr/image';
@@ -195,6 +196,10 @@
     });
 
     loginBtn.addEventListener('click', doLogin);
+
+    QuitButton.addEventListener('click',function () {
+        window.location.href = "main.html";
+    });
 
     document.addEventListener('visibilitychange', function () {
         if (document.hidden) {

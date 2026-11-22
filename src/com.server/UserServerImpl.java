@@ -71,7 +71,8 @@ public class UserServerImpl implements UserApi.Iface {
                     String cookie = cookieRs.getString("cookie");
                     if (cookie == null) cookie = "";
                     
-                    accountsJson.append(String.format("{\"uids\":\"%s\", \"cookie\":\"%s\"},", uids, cookie));
+                    accountsJson.append(String.format("{\"uids\":\"%s\", \"cookie\":\"%s\"},",
+                            escapeJson(uids), escapeJson(cookie)));
                 }
 
                 if (hasAccount) {
@@ -82,15 +83,52 @@ public class UserServerImpl implements UserApi.Iface {
                 // 3. 拼装最终的 JSON（新增了 default_uids 和 default_cookie）
                 String jsonResult = String.format(
                     "{\"status\":\"success\", \"id\":%d, \"name\":\"%s\", \"default_uids\":\"%s\", \"default_cookie\":\"%s\", \"accounts\":%s}", 
-                    id, name, defaultUids, defaultCookie, accountsJson.toString()
+                    id, escapeJson(name), escapeJson(defaultUids), escapeJson(defaultCookie), accountsJson.toString()
                 );
                 return jsonResult;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"error\", \"message\":\"服务器异常: " + e.getMessage() + "\"}";
+            return "{\"status\":\"error\", \"message\":\"服务器异常: " + escapeJson(e.getMessage()) + "\"}";
         }
         
         return "{\"status\":\"fail\", \"message\":\"账号或密码错误\"}";
+    }
+
+    /**
+     * JSON 字符串转义：Cookie 等字段内容本身含有双引号，必须转义后才可拼进 JSON。
+     */
+    private static String escapeJson(String value) {
+        if (value == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder(value.length() + 16);
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '"':
+                    sb.append("\\\"");
+                    break;
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                default:
+                    if (c < 0x20) {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+            }
+        }
+        return sb.toString();
     }
 }

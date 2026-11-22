@@ -18,14 +18,22 @@ loginForm.addEventListener('submit', async function (e) {
     if (!user || !pwd) { alert('不能为空'); return; }
 
     try {
-        const response = await fetch('/api/login', {
+        const response = await fetch('api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `username=${encodeURIComponent(user)}&password=${encodeURIComponent(pwd)}`
         });
 
-        // 解析 JSON 数据
-        const data = await response.json();
+        // 解析 JSON 数据（先取文本，便于解析失败时显示真实响应）
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (parseError) {
+            console.error('服务器返回非 JSON:', text);
+            alert('服务器返回异常，无法解析：\n' + text.slice(0, 200));
+            return;
+        }
 
         if (data.status === "success") {
             // 👇 因为后端字段变了，这里提示语也可以改得更丰富
@@ -78,7 +86,7 @@ registerForm.addEventListener('submit', async function (e) {
     }
 
     try {
-        const response = await fetch('/api/register', {
+        const response = await fetch('api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `username=${encodeURIComponent(user)}&password=${encodeURIComponent(pwd)}`
