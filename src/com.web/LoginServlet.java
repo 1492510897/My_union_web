@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/api/login")
@@ -26,12 +27,19 @@ public class LoginServlet extends HttpServlet {
             transport = new TSocket("127.0.0.1", 9090, 3000);
             transport.open();
             UserApi.Client client = new UserApi.Client(new TBinaryProtocol(transport));
-            
+
+            //接收 src\com.server\UserServerImpl.java返回的json字符串
             String result = client.loginLocal(username, password);
+
+            if (result.contains("\"status\":\"success\"")){
+                HttpSession session = req.getSession();
+                session.setAttribute("currentUser",username);
+            }
+
             resp.getWriter().write(result);
         } catch (Exception e) {
             e.printStackTrace();
-            resp.getWriter().write("网络异常: 无法连接 Thrift Server");
+            resp.getWriter().write("{\"status\":\"error\", \"message\":\"网络异常: 无法连接 Thrift Server\"}");
         } finally {
             if (transport != null && transport.isOpen()) transport.close();
         }

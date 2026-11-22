@@ -1,13 +1,5 @@
-.container {
-    width: 300px;
-    height: 200px;
+#container{
+    width:200px;
+    height:200px;
+    position: absolute;
 }
-.login-box{
-    width: 200px;
-    height: 80px;
-}
-.input{
-    width: 100px;
-    height: 30px;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
